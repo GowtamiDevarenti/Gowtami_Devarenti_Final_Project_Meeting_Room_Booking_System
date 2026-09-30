@@ -176,4 +176,58 @@ class BookingSystem:
             "No matching booking found."
         )
 
-  
+    def booking_statistics(self) -> dict[str, float]:
+        """Return booking statistics."""
+
+        total = len(self.bookings)
+
+        confirmed = len(
+            [
+                booking
+                for booking in self.bookings.values()
+                if booking.status == BookingStatus.CONFIRMED
+            ]
+        )
+
+        cancelled = len(
+            [
+                booking
+                for booking in self.bookings.values()
+                if booking.status == BookingStatus.CANCELLED
+            ]
+        )
+
+        revenue = sum(
+            booking.cost
+            for booking in self.bookings.values()
+            if booking.status == BookingStatus.CONFIRMED
+        )
+
+        return {
+            "total": total,
+            "confirmed": confirmed,
+            "cancelled": cancelled,
+            "revenue": revenue,
+        }
+
+    def room_summary(self) -> list[dict[str, object]]:
+        """Return booking information for every room."""
+
+        summaries = []
+
+        for room in self.rooms.values():
+
+            room_bookings = [
+                booking
+                for booking in self.bookings.values()
+                if booking.room.room_id == room.room_id
+            ]
+
+            summaries.append(
+                {
+                    "room": room,
+                    "bookings": room_bookings,
+                }
+            )
+
+        return summaries
