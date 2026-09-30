@@ -92,3 +92,125 @@ def choose_time_slot(
     return selected_slot
 
 
+def create_booking(
+    system: BookingSystem,
+) -> None:
+    """Ask for customer details and create a booking."""
+
+    print("\n--- CREATE BOOKING ---")
+
+    name = input("Customer name: ")
+    email = input("Customer email: ")
+
+    print("\nAvailable Rooms:")
+
+    for room in system.rooms.values():
+        print(room)
+
+    try:
+        room_id = int(
+            input("\nEnter Room ID: ")
+        )
+
+        room = system.get_room(room_id)
+
+        time_slot = choose_time_slot(
+            system,
+            room_id,
+        )
+
+        if time_slot is None:
+            return
+
+        booking = system.create_booking(
+            name,
+            email,
+            room_id,
+            time_slot,
+        )
+
+        print(
+            "\nBooking created successfully!"
+        )
+        print(booking)
+
+    except ValueError as error:
+        print(f"\nError: {error}")
+
+
+def show_all_bookings(
+    system: BookingSystem,
+) -> None:
+    """Show all bookings."""
+
+    print("\n--- ALL BOOKINGS ---")
+
+    if not system.bookings:
+        print("No bookings found.")
+        return
+
+    for booking in system.bookings.values():
+
+        print("\n" + "-" * 60)
+        print(f"Booking ID: {booking.booking_id}")
+        print(f"Customer: {booking.customer.name}")
+        print(f"Email: {booking.customer.email}")
+        print(f"Room: {booking.room.name}")
+        print(f"Room ID: {booking.room.room_id}")
+        print(f"Time: {booking.time_slot}")
+        print(f"Status: {booking.status.value}")
+        print(f"Cost: €{booking.cost:.2f}")
+
+
+def cancel_booking(
+    system: BookingSystem,
+) -> None:
+    """Cancel a booking using customer, room and time."""
+
+    print("\n--- CANCEL BOOKING ---")
+
+    if not system.bookings:
+        print("No bookings found.")
+        return
+
+    customer_name = input(
+        "Customer name: "
+    )
+
+    try:
+        room_id = int(
+            input("Room ID: ")
+        )
+
+        time_slot = choose_time_slot(system)
+
+        if time_slot is None:
+            return
+
+        booking = system.cancel_booking(
+            customer_name,
+            room_id,
+            time_slot,
+        )
+
+        print(
+            "\nBooking cancelled successfully!"
+        )
+
+        print(
+            f"Customer: {booking.customer.name}"
+        )
+        print(
+            f"Room: {booking.room.name}"
+        )
+        print(
+            f"Time: {booking.time_slot}"
+        )
+        print(
+            f"Status: {booking.status.value}"
+        )
+
+    except ValueError as error:
+        print(f"\nError: {error}")
+
+
