@@ -295,3 +295,51 @@ def show_menu() -> None:
     print("6. Room summary")
     print("0. Exit")
 
+
+def main() -> None:
+    """Run the meeting room booking system."""
+
+    system = BookingSystem()
+
+    while True:
+
+        show_menu()
+
+        choice = input(
+            "\nEnter your choice: "
+        )
+
+        if choice == "1":
+            show_room_availability(system)
+
+        elif choice == "2":
+            create_booking(system)
+
+        elif choice == "3":
+            show_all_bookings(system)
+
+        elif choice == "4":
+            cancel_booking(system)
+
+        elif choice == "5":
+            show_statistics(system)
+
+        elif choice == "6":
+            show_room_summary(system)
+
+        elif choice == "0":
+            print(
+                "\nThank you for using "
+                "the Meeting Room Booking System!"
+            )
+            break
+
+        else:
+            print(
+                "\nInvalid choice. "
+                "Please select a valid option."
+            )
+
+
+if __name__ == "__main__":
+    main()
