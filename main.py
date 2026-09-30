@@ -214,3 +214,84 @@ def cancel_booking(
         print(f"\nError: {error}")
 
 
+def show_statistics(
+    system: BookingSystem,
+) -> None:
+    """Display booking statistics."""
+
+    print("\n--- BOOKING STATISTICS ---")
+
+    statistics = system.booking_statistics()
+
+    print(
+        f"Total bookings: "
+        f"{statistics['total']}"
+    )
+
+    print(
+        f"Confirmed bookings: "
+        f"{statistics['confirmed']}"
+    )
+
+    print(
+        f"Cancelled bookings: "
+        f"{statistics['cancelled']}"
+    )
+
+    print(
+        f"Confirmed revenue: "
+        f"€{statistics['revenue']:.2f}"
+    )
+
+
+def show_room_summary(
+    system: BookingSystem,
+) -> None:
+    """Display a summary of every room."""
+
+    print("\n--- ROOM SUMMARY ---")
+
+    summaries = system.room_summary()
+
+    for summary in summaries:
+
+        room = summary["room"]
+        bookings = summary["bookings"]
+
+        print("\n" + "=" * 60)
+        print(room)
+        print("=" * 60)
+
+        if not bookings:
+            print("No bookings.")
+            continue
+
+        print(
+            f"Total bookings: {len(bookings)}"
+        )
+
+        for booking in bookings:
+
+            print(
+                f"{booking.time_slot} | "
+                f"{booking.customer.name} | "
+                f"{booking.status.value}"
+            )
+
+
+def show_menu() -> None:
+    """Display the main menu."""
+
+    print("\n")
+    print("=" * 50)
+    print("       MEETING ROOM BOOKING SYSTEM")
+    print("=" * 50)
+
+    print("1. Check room availability")
+    print("2. Create booking")
+    print("3. Show all bookings")
+    print("4. Cancel booking")
+    print("5. Booking statistics")
+    print("6. Room summary")
+    print("0. Exit")
+
