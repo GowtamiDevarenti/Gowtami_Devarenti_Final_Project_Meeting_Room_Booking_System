@@ -162,10 +162,11 @@ def show_all_bookings(
         print(f"Cost: €{booking.cost:.2f}")
 
 
+
 def cancel_booking(
     system: BookingSystem,
 ) -> None:
-    """Cancel a booking using customer, room and time."""
+    """Cancel an existing booking using a slot number."""
 
     print("\n--- CANCEL BOOKING ---")
 
@@ -173,20 +174,73 @@ def cancel_booking(
         print("No bookings found.")
         return
 
-    customer_name = input(
-        "Customer name: "
-    )
+    customer_name = input("Customer name: ")
 
     try:
-        room_id = int(
-            input("Room ID: ")
-        )
+        room_id = int(input("Room ID: "))
 
-        time_slot = choose_time_slot(system)
+        # Check that the room exists
+        room = system.get_room(room_id)
 
-        if time_slot is None:
+        # Find active bookings for this room
+        booked_slots = []
+
+        print(f"\nBooked time slots for {room.name}:")
+
+        for booking in system.bookings.values():
+            if (
+                booking.room.room_id == room_id
+                and booking.status == BookingStatus.CONFIRMED
+            ):
+                booked_slots.append(booking.time_slot)
+
+        # No active bookings for this room
+        if not booked_slots:
+            print(
+                "\nThere are no active bookings "
+                "for this room."
+            )
             return
 
+        # Display booked slots with numbers
+        for number, time_slot in enumerate(
+            booked_slots,
+            start=1,
+        ):
+            print(
+                f"{number}. {time_slot}"
+            )
+
+        # Ask user to select a number
+        choice = input(
+            "\nEnter slot number to cancel: "
+        )
+
+        # Make sure the input is a number
+        if not choice.isdigit():
+            print(
+                "\nPlease enter a number."
+            )
+            return
+
+        slot_number = int(choice)
+
+        # Check that the number is valid
+        if (
+            slot_number < 1
+            or slot_number > len(booked_slots)
+        ):
+            print(
+                "\nInvalid slot number."
+            )
+            return
+
+        # Convert the number into the actual time slot
+        time_slot = booked_slots[
+            slot_number - 1
+        ]
+
+        # Cancel the booking
         booking = system.cancel_booking(
             customer_name,
             room_id,
@@ -200,18 +254,22 @@ def cancel_booking(
         print(
             f"Customer: {booking.customer.name}"
         )
+
         print(
             f"Room: {booking.room.name}"
         )
+
         print(
             f"Time: {booking.time_slot}"
         )
+
         print(
             f"Status: {booking.status.value}"
         )
 
     except ValueError as error:
         print(f"\nError: {error}")
+
 
 
 def show_statistics(
